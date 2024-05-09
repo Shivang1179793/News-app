@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
+
 import News from './News';
 import './NewsApp.css'
 function NewsApp() {
-    const apiKey = '6f224d7bc55140c9a79a9b9f7ceb7e37';
+    function getTwoDaysBeforeDate() {
+        const today = new Date();
+        const twoDaysAgo = new Date(today);
+        twoDaysAgo.setDate(today.getDate() - 2);
+        return twoDaysAgo.toISOString().split('T')[0];
+    }
+    const [startDate, setStartDate] = useState(getTwoDaysBeforeDate());
     const [newsList, setNewsList] = useState([]);
-    const [query, setQuery] = useState('tesla');
-    const apiUrl = `https://newsapi.org/v2/everything?q=${query}&from=2023-31-12&sortBy=publishedAt&apiKey=${apiKey}`;
+    const [query, setQuery] = useState('india');
+    const apiUrl = `https://newsapi.org/v2/everything?q=${query}&from=${startDate}&sortBy=publishedAt&apiKey=${process.env.REACT_APP_API_KEY}`;
     const queryInputRef = useRef(null);
     useEffect(() => {
         fetchData();
-    }, [query]);
+    }, [query, startDate]);
     async function fetchData() {
         try {
             const response = await fetch(apiUrl);
